@@ -1,0 +1,31 @@
+---
+import Layout from "@layouts/Layout.astro";
+import type { Post } from "../../types/posts.dto";
+
+const { id } = Astro.params;
+const response = await fetch(
+  `${import.meta.env.API_STRAPI_URL}/${id}`
+);
+const responseData = await response.json();
+const data: Post = responseData.data.attributes;
+
+---
+
+<Layout title="">
+    <div class="card mb-3" style="max-width: 100%;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src={data.imageURL} alt={data.title} class="img-fluid rounded-start">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title"> {data.title} </h5>
+                    <p class="card-text"> {data.content} </p>
+                    <a href={`/blog/`} class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">
+                        Volver
+                    </a> 
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>

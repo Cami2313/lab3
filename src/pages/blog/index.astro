@@ -1,0 +1,51 @@
+---
+import Layout from "@layouts/Layout.astro";
+import type { Post } from "../../types/posts.dto";
+
+const response = await fetch(
+  `${import.meta.env.API_STRAPI_URL}`
+);
+const data = await response.json();
+const viewpost = "/viewpost/";
+
+let posts: Post[] = [];
+
+if (data && data.data) {
+  posts = data.data.map((item: any) => {
+    const attributes = item.attributes;
+    return {
+      id: item.id,
+      title: attributes.title,
+      content: attributes.content,
+      imageURL: attributes.imageURL,
+      preview: attributes.preview,
+      date: attributes.publishedAt
+    };
+  }) as Post[];
+}
+
+---
+<Layout title="">
+  <div class="row mb-2">
+    {
+      posts.map((item: Post) => (
+      <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-primary-emphasis">Cine</strong>
+          <h3 class="mb-0"> {item.title} </h3>
+          <p class="card-text mb-auto"> {item.preview} </p>
+          <a href={`${viewpost}${item.id}`} class="icon-link gap-1 icon-link-hover stretched-link">
+            Continuar Leyendo
+          </a>
+        </div>
+        <div class="col-auto d-none d-lg-block">
+          <img src={item.imageURL} class="bd-placeholder-img" width="auto" height="300" role="img" alt={item.title}/>
+        </div>
+      </div>
+      ))
+    }
+    <a href={`/`} class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">
+      Volver
+    </a>
+  </div>
+</Layout>
